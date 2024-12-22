@@ -1,0 +1,65 @@
+lateinit
+Purpose: Used for variables that will be initialized later and can change values. It is only applicable to var properties (mutable variables).
+Declaration: lateinit var.
+Key Points:
+Only for Non-Nullable Types: The type of the variable cannot be nullable (e.g., String? is not allowed).
+No Immediate Initialization Required: The variable doesn’t need to be initialized at the time of declaration.
+Cannot Be Used with Primitive Types: lateinit is not applicable to primitive types like Int, Double, etc.
+Checked Before Usage: If accessed before initialization, it throws an UninitializedPropertyAccessException.
+Example:
+
+kotlin
+Copy code
+class Example {
+    lateinit var name: String
+
+    fun initializeName(value: String) {
+        name = value
+    }
+
+    fun printName() {
+        if (::name.isInitialized) {
+            println("Name is: $name")
+        } else {
+            println("Name is not initialized")
+        }
+    }
+}
+lazy
+Purpose: Used for read-only properties that are initialized only once, the first time they are accessed. It is applicable to val properties (immutable variables).
+Declaration: val by lazy.
+Key Points:
+Thread-Safe by Default: The initialization block is synchronized to ensure thread safety.
+Lazy Initialization: The value is computed only when the property is accessed for the first time.
+No Exception for Non-Initialization: Since it's computed on access, it doesn’t throw exceptions for being uninitialized.
+Example:
+
+kotlin
+Copy code
+class Example {
+    val lazyValue: String by lazy {
+        println("Computed once!")
+        "Hello, Lazy Initialization"
+    }
+
+    fun printValue() {
+        println(lazyValue) // First access: Initializes and prints
+        println(lazyValue) // Subsequent access: Uses cached value
+    }
+}
+Comparison
+Feature	lateinit	lazy
+Keyword	lateinit var	val by lazy
+Mutability	Mutable (var)	Immutable (val)
+Initialization Time	Must be manually initialized	Automatically initialized on first access
+Error Handling	Throws UninitializedPropertyAccessException if accessed before initialization	No exception, as it computes the value when accessed
+Thread Safety	Not thread-safe by default	Thread-safe by default (unless specified otherwise)
+When to Use
+Use lateinit when:
+
+The variable needs to be initialized later.
+It’s a non-primitive, mutable property (e.g., dependency injection, Android views).
+Use lazy when:
+
+The property value is expensive to compute or not always needed.
+The property is immutable and should only be initialized once.
